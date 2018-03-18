@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <title>AngularJS-Intercepting HTTP Request/Response</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.9/angular.min.js"></script>
+        <script>
+            var rootApp = angular.module('myApp', []);
+
+            function interceptor() {
+            return {
+                request: function(config) {
+                console.log("REQUEST OK");
+                return config;
+                },
+
+                requestError: function(config) {
+                    console.log("REQUEST CONFIG ERROR");
+                return config;
+                },
+
+                response: function(res) {
+                    console.log("RESPONSE OK");
+                return res;
+                },
+
+                responseError: function(res) {
+                    console.log("RESPONSE ERROR");
+                return res;
+                }
+            }
+            }
+
+            //add factory and set configuration to intercept http requests/responses
+            rootApp.factory('interceptor', interceptor)
+                //minification safe by adding [] in the arguments
+                .config(['$httpProvider',function ($httpProvider) {
+                    $httpProvider.interceptors.push('interceptor');
+            }]);
+
+        //call a http get request-Asynchronous
+            rootApp.run(function($http) {
+            $http.get('https://jsonplaceholder.typicode.com/posts')
+                .then(function(res) {
+                    console.log("RESPONSE DATA");
+                console.log(res)
+                })
+            });
+        </script>
+    </head>
+    <body ng-app="myApp">
+    </body>
+</html>
